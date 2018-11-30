@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using StarCitizen.Locations;
 
 namespace StarCitizen.StarMap.Internal
 {

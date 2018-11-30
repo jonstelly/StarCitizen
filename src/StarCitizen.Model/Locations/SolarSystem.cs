@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Text;
-using Newtonsoft.Json;
 
-namespace StarCitizen.StarMap
+namespace StarCitizen.Locations
 {
-    public enum SolarSystemType
-    {
-        Single,
-        Binary
-    }
-
-    //id, status, time_modified, type, name, code, position_x, position_y, position_z, description, info_url, affiliation, aggregated_size, aggregated_population, aggregated_economy, aggregated_danger, thumbnail
     public class SolarSystem : NamedEntity
     {
         public SolarSystemStatus Status { get; set; }
         public DateTime TimeModified { get; set; }
         public SolarSystemType Type { get; set; }
-        public string Code { get; set; }
         public Vector3 Position { get; set; }
 
         public float Size { get; set; }

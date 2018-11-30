@@ -10,7 +10,7 @@ namespace StarCitizen.StarMap.Internal
     {
         public int Page { get; set; }
         public int Offset { get; set; }
-        [JsonProperty("resultset")]
-        public List<T> ResultSet { get; set; }
+
+        [JsonProperty("resultset")] public List<T> ResultSet { get; set; }
     }
 }

@@ -5,14 +5,26 @@ using System.Numerics;
 using System.Text;
 using AutoMapper;
 using Newtonsoft.Json;
-using StarCitizen.StarMap.Internal;
+using StarCitizen.Json;
+using StarCitizen.Locations;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace StarCitizen.StarMap.Mappings
+namespace StarCitizen.StarMap.Internal
 {
     public class ApiMappingTests
     {
+        public ApiMappingTests(ITestOutputHelper output)
+        {
+            _output = output;
+            var config = new MapperConfiguration(mc => { mc.AddProfile<ApiProfile>(); });
+            _mapper = config.CreateMapper();
+        }
+
+        private readonly ITestOutputHelper _output;
+        private readonly IMapper _mapper;
+
+
         private static readonly string StantonJson = @"
 {
   ""id"": ""314"",
@@ -49,35 +61,6 @@ namespace StarCitizen.StarMap.Mappings
     }
   }
 }";
-        private readonly ITestOutputHelper _output;
-        private readonly IMapper _mapper;
-        public ApiMappingTests(ITestOutputHelper output)
-        {
-            _output = output;
-            var config = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile<ApiProfile>();
-            });
-            _mapper = config.CreateMapper();
-        }
-
-        [Fact]
-        public void ConvertStarMapResponse()
-        {
-            var json = Encoding.UTF8.GetString(Json.ApiResponses.StarMapBootstrap);
-            var result = JsonConvert.DeserializeObject<ApiResponse<ApiStarMapData>>(json, ApiSettings.JsonSettings);
-            Assert.NotNull(result);
-            var stanton = result.Data.Systems.ResultSet[0];
-            Assert.NotNull(stanton);
-            Assert.Equal("Stanton", stanton.Name);
-            Assert.NotEqual(0f, stanton.PositionX);
-            Assert.NotEqual(0f, stanton.PositionY);
-            Assert.NotEqual(0f, stanton.PositionZ);
-            Assert.NotEqual(0f, stanton.AggregatedDanger);
-            Assert.NotEqual(0f, stanton.AggregatedEconomy);
-            Assert.NotEqual(0f, stanton.AggregatedPopulation);
-            Assert.NotEqual(0f, stanton.AggregatedSize);
-        }
 
         [Fact]
         public void ConvertSolarSystem()
@@ -92,6 +75,28 @@ namespace StarCitizen.StarMap.Mappings
             Assert.NotEqual(0f, ss.Economy);
             Assert.NotEqual(0f, ss.Population);
             Assert.NotEqual(0f, ss.Size);
+        }
+
+        [Fact]
+        public void ConvertStarMapResponse()
+        {
+            var json = Encoding.UTF8.GetString(ApiResponses.StarMapBootstrap);
+            var result = JsonConvert.DeserializeObject<ApiResponse<ApiStarMapData>>(json, ApiSettings.JsonSettings);
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.Data.Affiliations.ResultSet);
+            Assert.NotEmpty(result.Data.Species.ResultSet);
+            Assert.NotEmpty(result.Data.Systems.ResultSet);
+
+            var stanton = result.Data.Systems.ResultSet[0];
+            Assert.NotNull(stanton);
+            Assert.Equal("Stanton", stanton.Name);
+            Assert.NotEqual(0f, stanton.PositionX);
+            Assert.NotEqual(0f, stanton.PositionY);
+            Assert.NotEqual(0f, stanton.PositionZ);
+            Assert.NotEqual(0f, stanton.AggregatedDanger);
+            Assert.NotEqual(0f, stanton.AggregatedEconomy);
+            Assert.NotEqual(0f, stanton.AggregatedPopulation);
+            Assert.NotEqual(0f, stanton.AggregatedSize);
         }
     }
 }
