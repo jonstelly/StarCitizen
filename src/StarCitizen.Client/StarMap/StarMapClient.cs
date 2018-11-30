@@ -15,7 +15,6 @@ namespace StarCitizen.StarMap
     public class StarMapClient : IDisposable
     {
         private static readonly IMapper Mapper;
-
         public static readonly Uri BaseUrl = new Uri("https://robertsspaceindustries.com/api/starmap/");
 
         static StarMapClient()
@@ -23,6 +22,9 @@ namespace StarCitizen.StarMap
             var config = new MapperConfiguration(mc => { mc.AddProfile<ApiProfile>(); });
             Mapper = config.CreateMapper();
         }
+
+        private readonly HttpClient _client;
+        private readonly bool _disposeClient;
 
         public StarMapClient(HttpClient client = null)
         {
@@ -33,9 +35,6 @@ namespace StarCitizen.StarMap
                 _client = new HttpClient();
             }
         }
-
-        private readonly HttpClient _client;
-        private readonly bool _disposeClient;
 
         public void Dispose()
         {
@@ -52,16 +51,12 @@ namespace StarCitizen.StarMap
                 using (var txt = new StreamReader(s))
                 using (var rd = new JsonTextReader(txt))
                 {
-                    var result = ApiSettings.Json.Deserialize<ApiResponse<ApiStarMapData>>(rd);
+                    var result = ApiSettings.Json.Deserialize<ApiResponse<ApiStarMapInfo>>(rd);
                     if (!result.Success)
                         throw new InvalidOperationException(
                             $"Failure getting star map: {result.Code} - {result.Message}");
-                    return new StarMapInfo
-                    {
-                        Systems = result.Data.Systems.ResultSet.Select(sys => Mapper.Map<SolarSystem>(sys)).ToList(),
-                        Affiliations = result.Data.Affiliations.ResultSet,
-                        Species = result.Data.Species.ResultSet
-                    };
+
+                    return Mapper.Map<StarMapInfo>(result.Data);
                 }
             }
         }

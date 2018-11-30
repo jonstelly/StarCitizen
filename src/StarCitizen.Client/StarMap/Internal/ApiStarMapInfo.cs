@@ -5,7 +5,7 @@ using System.Text;
 
 namespace StarCitizen.StarMap.Internal
 {
-    public class ApiStarMapData
+    public class ApiStarMapInfo
     {
         public ApiPage<Race> Species { get; set; }
         public ApiPage<Faction> Affiliations { get; set; }

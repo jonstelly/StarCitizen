@@ -24,50 +24,22 @@ namespace StarCitizen.StarMap.Internal
         private readonly ITestOutputHelper _output;
         private readonly IMapper _mapper;
 
-
-        private static readonly string StantonJson = @"
-{
-  ""id"": ""314"",
-  ""status"": ""P"",
-  ""time_modified"": ""2018-01-27 01:36:42"",
-  ""type"": ""SINGLE_STAR"",
-  ""name"": ""Stanton"",
-  ""code"": ""STANTON"",
-  ""position_x"": ""49.53471800"",
-  ""position_y"": ""-2.63396450"",
-  ""position_z"": ""16.47529200"",
-  ""description"": ""While the UEE still controls the rights to the system overall, the four planets themselves were sold by the government to four megacorporations making them the only privately-owned worlds in the Empire. Though subject to the UEE's Common Laws and standard penal code, the UEE does not police the region. Instead, private planetary security teams enforce the local law."",
-  ""info_url"": null,
-  ""affiliation"": [
-    {
-      ""id"": ""1"",
-      ""name"": ""UEE"",
-      ""code"": ""uee"",
-      ""color"": ""#48bbd4"",
-      ""membership.id"": ""741""
-    }
-  ],
-  ""aggregated_size"": ""4.85000000"",
-  ""aggregated_population"": 10,
-  ""aggregated_economy"": 10,
-  ""aggregated_danger"": 10,
-  ""thumbnail"": {
-    ""slug"": ""anxi4tr0ija81"",
-    ""source"": ""https://robertsspaceindustries.com/media/anxi4tr0ija81r/source/JStanton-Arccorp.jpg"",
-    ""images"": {
-      ""post"": ""https://robertsspaceindustries.com/media/anxi4tr0ija81r/post/JStanton-Arccorp.jpg"",
-      ""product_thumb_large"": ""https://robertsspaceindustries.com/media/anxi4tr0ija81r/product_thumb_large/JStanton-Arccorp.jpg"",
-      ""subscribers_vault_thumbnail"": ""https://robertsspaceindustries.com/media/anxi4tr0ija81r/subscribers_vault_thumbnail/JStanton-Arccorp.jpg""
-    }
-  }
-}";
+        [Fact]
+        public void ConvertApiStarMapInfo()
+        {
+            var json = Encoding.UTF8.GetString(ApiResponses.StarMapBootstrap);
+            var apiInfo = JsonConvert.DeserializeObject<ApiResponse<ApiStarMapInfo>>(json, ApiSettings.JsonSettings);
+            var info = _mapper.Map<StarMapInfo>(apiInfo.Data);
+            Assert.NotNull(info);
+            Assert.NotEmpty(info.Affiliations);
+            Assert.NotEmpty(info.Species);
+            Assert.NotEmpty(info.Systems);
+        }
 
         [Fact]
         public void ConvertSolarSystem()
         {
-            //var json = Encoding.UTF8.GetString(Json.ApiResponses.StarMapBootstrap);
-            //var response = JsonConvert.DeserializeObject<JObject>(json, ApiSettings.JsonSettings);
-            var api = JsonConvert.DeserializeObject<ApiSolarSystem>(StantonJson, ApiSettings.JsonSettings);
+            var api = JsonConvert.DeserializeObject<ApiSolarSystem>(Json.ApiResponses.StantonJson, ApiSettings.JsonSettings);
             var ss = _mapper.Map<SolarSystem>(api);
             Assert.NotNull(ss);
             Assert.NotEqual(ss.Position, Vector3.Zero);
@@ -81,7 +53,7 @@ namespace StarCitizen.StarMap.Internal
         public void ConvertStarMapResponse()
         {
             var json = Encoding.UTF8.GetString(ApiResponses.StarMapBootstrap);
-            var result = JsonConvert.DeserializeObject<ApiResponse<ApiStarMapData>>(json, ApiSettings.JsonSettings);
+            var result = JsonConvert.DeserializeObject<ApiResponse<ApiStarMapInfo>>(json, ApiSettings.JsonSettings);
             Assert.NotNull(result);
             Assert.NotEmpty(result.Data.Affiliations.ResultSet);
             Assert.NotEmpty(result.Data.Species.ResultSet);

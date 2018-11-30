@@ -61,6 +61,26 @@ namespace StarCitizen.Json {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {
+        ///          &quot;id&quot;: &quot;314&quot;,
+        ///          &quot;status&quot;: &quot;P&quot;,
+        ///          &quot;time_modified&quot;: &quot;2018-01-27 01:36:42&quot;,
+        ///          &quot;type&quot;: &quot;SINGLE_STAR&quot;,
+        ///          &quot;name&quot;: &quot;Stanton&quot;,
+        ///          &quot;code&quot;: &quot;STANTON&quot;,
+        ///          &quot;position_x&quot;: &quot;49.53471800&quot;,
+        ///          &quot;position_y&quot;: &quot;-2.63396450&quot;,
+        ///          &quot;position_z&quot;: &quot;16.47529200&quot;,
+        ///          &quot;description&quot;:
+        ///            &quot;While the UEE still controls the rights to the system overall, the four planets themselves were sold by the government to four megacorporations making them [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string StantonJson {
+            get {
+                return ResourceManager.GetString("StantonJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] StarMapBootstrap {

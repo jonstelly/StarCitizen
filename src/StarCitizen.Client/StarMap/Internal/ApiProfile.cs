@@ -30,6 +30,19 @@ namespace StarCitizen.StarMap.Internal
                 .ForMember(ss => ss.Population, m => m.MapFrom(api => api.AggregatedPopulation))
                 .ForMember(ss => ss.Size, m => m.MapFrom(api => api.AggregatedSize))
                 .ReverseMap();
+
+            CreateMap(typeof(ApiPage<>), typeof(List<>)).ConvertUsing(typeof(ApiPageConverter<,>));
+            CreateMap<ApiStarMapInfo, StarMapInfo>();
+        }
+        private class ApiPageConverter<TSource, TDestination> : ITypeConverter<ApiPage<TSource>, List<TDestination>>
+        {
+            public List<TDestination> Convert(ApiPage<TSource> source, List<TDestination> destination, ResolutionContext context)
+            {
+                destination = destination ?? new List<TDestination>();
+                destination.Clear();
+                destination.AddRange(source.ResultSet.Select(s => context.Mapper.Map<TDestination>(s)));
+                return destination;
+            }
         }
     }
 }
